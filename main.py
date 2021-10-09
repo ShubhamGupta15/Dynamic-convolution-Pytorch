@@ -123,6 +123,7 @@ def val(epoch):
 
 best_val_acc=0.
 for i in range(args.epochs):
+    print('Epoch:',i+1)
     train(i+1)
     temp_acc = val(i+1)
     if temp_acc>best_val_acc:
