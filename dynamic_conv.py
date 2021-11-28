@@ -1,4 +1,3 @@
-
 """
 Created on Fri Nov 26 02:02:55 2021
 
@@ -47,13 +46,13 @@ class attention2d(nn.Module):
         x = self.fc1(x)
         x = F.relu(x)
         x = self.fc2(x)
-        return F.tanh(x)  # batch_size, K ,2, 2
+        return torch.tanh(x)  # batch_size, K ,2, 2
 
 
 
-class Dynamic_conv2d(nn.Module):
+class DyConv2d(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, ratio=0.25, stride=1, padding=0, dilation=1, groups=1, bias=False, K=4,temperature=34, init_weight=True):
-        super(Dynamic_conv2d, self).__init__()
+        super(DyConv2d, self).__init__()
         assert in_channels%groups==0
         self.in_planes = in_channels
         self.out_planes = out_channels
@@ -84,7 +83,7 @@ class Dynamic_conv2d(nn.Module):
 
     def forward(self, x):#将batch视作维度变量，进行组卷积，因为组卷积的权重是不同的，动态卷积的权重也是不同的
         
-        attention_weights = self.attention(x) #batch_size, K ,2, 2
+        attention_weights = self.attention(x) #batch_size, K ,2 , 2
         
         batch_size, in_planes, height, width = x.size() 
         x = x.view(1, -1, height, width)
@@ -94,9 +93,8 @@ class Dynamic_conv2d(nn.Module):
         K, out_planes, in_planes, (kernel_size), (kernel_size) =  self.weight.size()
         kernel_size = kernel_size-1
         
-        weights = self.weight.view(1, K, out_planes*in_planes*(kernel_size+1), (kernel_size+1))
+        weights = self.weight.view(out_planes*in_planes, K,  (kernel_size+1),  (kernel_size+1))
         agg_weights = F.conv2d(weights, attention_weights)
-        
         aggregate_weight = agg_weights.view(batch_size* out_planes, in_planes, kernel_size, kernel_size)
         
         if self.bias:
