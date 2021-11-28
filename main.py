@@ -81,7 +81,10 @@ def adjust_lr(optimizer, epoch):
             lr = p['lr']
         print('Change lr:'+str(lr))
 
-
+trainAcc = []
+valAcc = []
+train_loss =[]
+val_loss = []
 def train(epoch):
     model.train()
     avg_loss = 0.
@@ -99,7 +102,10 @@ def train(epoch):
         loss.backward()
 
         optimizer.step()
-    print('Train Epoch: {}, loss{:.6f}, acc{}'.format(epoch, loss.item(), train_acc/len(trainloader.dataset)), end='')
+    print('Train Epoch: {}, loss{:.6f}, acc{}'.format(epoch, loss.item(), 100.*train_acc/len(trainloader.dataset)), end='')
+    trainAcc.append(100.*train_acc/len(trainloader.dataset))
+    train_loss.append(avg_loss)
+    print(trainAcc,'\n', train_loss)
     if args.net_name.startswith('dy'):
         model.update_temperature()
 
@@ -118,12 +124,14 @@ def val(epoch):
     test_loss/=len(testloader.dataset)
     correct = int(correct)
     print('Test set:average loss: {:.4f}, accuracy{}'.format(test_loss, 100.*correct/len(testloader.dataset)))
-    return correct/len(testloader.dataset)
+    valAcc.append(100.*correct/len(testloader.dataset))
+    val_loss.append(test_loss)
+    print(valAcc,'\n', val_loss)
+    return crrect/len(testloader.dataset)print(trainAcc,'\n', train_loss)print(trainAcc,'\n', train_loss)
 
 
 best_val_acc=0.
 for i in range(args.epochs):
-    print('Epoch:',i+1)
     train(i+1)
     temp_acc = val(i+1)
     if temp_acc>best_val_acc:
