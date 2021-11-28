@@ -53,7 +53,7 @@ class attention2d(nn.Module):
 
 class Dynamic_conv2d(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, ratio=0.25, stride=1, padding=0, dilation=1, groups=1, bias=False, K=4,temperature=34, init_weight=True):
-        super(DyConv2d, self).__init__()
+        super(Dynamic_conv2d, self).__init__()
         assert in_channels%groups==0
         self.in_planes = in_channels
         self.out_planes = out_channels
