@@ -127,7 +127,7 @@ def val(epoch):
     valAcc.append(100.*correct/len(testloader.dataset))
     val_loss.append(test_loss)
     print(valAcc,'\n', val_loss)
-    return crrect/len(testloader.dataset)print(trainAcc,'\n', train_loss)print(trainAcc,'\n', train_loss)
+    return correct/len(testloader.dataset)
 
 
 best_val_acc=0.
