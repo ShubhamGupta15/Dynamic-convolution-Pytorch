@@ -13,7 +13,7 @@ from torchvision.models.resnet import resnet18 as raw_resnet18
 
 parser = argparse.ArgumentParser(description='dynamic convolution')
 parser.add_argument('--dataset', type=str, default='cifar10', help='training dataset')
-parser.add_argument('--batch-size', type=int, default=128)
+parser.add_argument('--+-batch-size', type=int, default=128)
 parser.add_argument('--test-batch-size', type=int, default=20)
 parser.add_argument('--epochs', type=int, default=160)
 parser.add_argument('--lr', type=float, default=0.1, )
@@ -53,14 +53,14 @@ elif args.dataset=='cifar100':
                                                 transforms.ToTensor(),
                                                 transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
                                             ]))
-    trainloader = torch.utils.data.DataLoader(trainset, batch_size=args.batch_size, shuffle=True, num_workers=0)
+    trainloader = torch.utils.data.DataLoader(trainset, batch_size=args.batch_size, shuffle=True, num_workers=-1)
 
     testset = torchvision.datasets.CIFAR100(root='./data', train=False, download=True,
                                            transform=transforms.Compose([
                                                transforms.ToTensor(),
                                                transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
                                            ]))
-    testloader = torch.utils.data.DataLoader(testset, batch_size=args.batch_size, shuffle=False, num_workers=0)
+    testloader = torch.utils.data.DataLoader(testset, batch_size=args.batch_size, shuffle=False, num_workers=-1)
 
 if args.net_name=='dy_resnet18':
     model = dy_resnet18(num_classes=numclasses)
@@ -70,7 +70,8 @@ elif args.net_name=='raw_vgg11':
     model = raw_vgg11(num_classes=numclasses)
 elif args.net_name=='dy_vgg11':
     model = dy_vgg11(num_classes=numclasses)
-model.to(args.device)
+# model.to(args.device)
+model.cuda(0)
 optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
 print(str(args))
 
@@ -92,7 +93,8 @@ def train(epoch):
     adjust_lr(optimizer, epoch)
     for batch_idx, (data, target) in enumerate(trainloader):
 
-        data, target = data.to(args.device), target.to(args.device)
+#         data, target = data.to(args.device), target.to(args.device)
+        data, target = data.cuda(0), target.cuda(0)
         optimizer.zero_grad()
         output = model(data)
         loss = F.cross_entropy(output, target)
