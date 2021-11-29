@@ -13,7 +13,7 @@ from torchvision.models.resnet import resnet18 as raw_resnet18
 
 parser = argparse.ArgumentParser(description='dynamic convolution')
 parser.add_argument('--dataset', type=str, default='cifar10', help='training dataset')
-parser.add_argument('--+-batch-size', type=int, default=128)
+parser.add_argument('--batch-size', type=int, default=128)
 parser.add_argument('--test-batch-size', type=int, default=20)
 parser.add_argument('--epochs', type=int, default=160)
 parser.add_argument('--lr', type=float, default=0.1, )
