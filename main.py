@@ -108,8 +108,8 @@ def train(epoch):
     trainAcc.append(100.*train_acc/len(trainloader.dataset))
     train_loss.append(avg_loss)
     print(trainAcc,'\n', train_loss)
-    if args.net_name.startswith('dy'):
-        model.update_temperature()
+#     if args.net_name.startswith('dy'):
+#         model.update_temperature()
 
 
 def val(epoch):
